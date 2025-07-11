@@ -67,15 +67,30 @@ it('can add an object property with nested schema', function () {
 
 it('can add an enum property', function () {
     $schema = new ObjectSchemaBuilder;
-    $schema->addEnum('status', 'string', ['active', 'inactive'], true);
+    $schema->addEnum('status', ['active', 'inactive'], true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
         'properties' => [
             'status' => [
-                'type' => 'string',
+                'type' => 'enum',
                 'required' => true,
                 'enum' => ['active', 'inactive'],
+            ],
+        ],
+    ]);
+});
+
+it('can add a reference property', function () {
+    $schema = new ObjectSchemaBuilder;
+    $schema->addReference('user', 'User', true);
+
+    expect($schema->toArray())->toMatchArray([
+        'type' => 'object',
+        'properties' => [
+            'user' => [
+                'type' => 'User',
+                'required' => true,
             ],
         ],
     ]);

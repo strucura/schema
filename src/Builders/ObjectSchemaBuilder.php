@@ -3,13 +3,13 @@
 namespace Strucura\Schema\Builders;
 
 use Illuminate\Support\Traits\Macroable;
-use Strucura\Schema\Property;
-use Strucura\Schema\Schema;
+use Strucura\Schema\Properties\Property;
 
 class ObjectSchemaBuilder
 {
     use Macroable;
 
+    /** @var array<string, Property> */
     private array $properties = [];
 
     private string $type;
@@ -38,7 +38,7 @@ class ObjectSchemaBuilder
     {
         return $this->addProperty($name, 'array', $isRequired, function (Property $property) use ($items) {
             if (is_callable($items)) {
-                $nestedDefinition = new Schema;
+                $nestedDefinition = new self;
                 $items($nestedDefinition);
                 $property->setAttribute('items', $nestedDefinition->toArray());
             } else {
@@ -47,9 +47,15 @@ class ObjectSchemaBuilder
         });
     }
 
-    public function addEnum(string $name, string $type, array $values, bool $isRequired = false): self
+    /**
+     * @param string $name
+     * @param array<string|int|float> $values
+     * @param bool $isRequired
+     * @return self
+     */
+    public function addEnum(string $name, array $values, bool $isRequired = false): self
     {
-        return $this->addProperty($name, $type, $isRequired, function (Property $property) use ($values) {
+        return $this->addProperty($name, 'enum', $isRequired, function (Property $property) use ($values) {
             $property->setAttribute('enum', $values);
         });
     }
@@ -57,7 +63,7 @@ class ObjectSchemaBuilder
     public function addObject(string $name, \Closure $callback, bool $isRequired = false): self
     {
         return $this->addProperty($name, 'object', $isRequired, function (Property $property) use ($callback) {
-            $nestedDefinition = new ObjectSchemaBuilder;
+            $nestedDefinition = new self;
             $callback($nestedDefinition);
             $property->setAttribute('properties', $nestedDefinition->toArray()['properties']);
         });
@@ -68,6 +74,13 @@ class ObjectSchemaBuilder
         return $this->addProperty($name, $type, $isRequired);
     }
 
+    /**
+     * @param string $name
+     * @param string $type
+     * @param bool $isRequired
+     * @param \Closure|null $callback
+     * @return self
+     */
     protected function addProperty(string $name, string $type, bool $isRequired = false, ?\Closure $callback = null): self
     {
         $property = new Property($type, $isRequired);
@@ -81,18 +94,19 @@ class ObjectSchemaBuilder
         return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         $properties = array_map(
-            fn ($property) => $property->toArray(),
+            fn (Property $property) => $property->toArray(),
             $this->properties
         );
 
-        $result = [
+        return [
             'type' => $this->type,
             'properties' => $properties,
         ];
-
-        return $result;
     }
 }

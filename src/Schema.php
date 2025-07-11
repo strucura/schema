@@ -2,7 +2,7 @@
 
 namespace Strucura\Schema;
 
-use Strucura\Schema\Builders\EnumSchemaBuilder;
+use Strucura\Schema\Builders\BackedEnumSchemaBuilder;
 use Strucura\Schema\Builders\ObjectSchemaBuilder;
 
 class Schema
@@ -12,8 +12,8 @@ class Schema
         return app(ObjectSchemaBuilder::class);
     }
 
-    public function enum(): EnumSchemaBuilder
+    public function enum(string $backedEnumClass): BackedEnumSchemaBuilder
     {
-        return app(EnumSchemaBuilder::class);
+        return app(BackedEnumSchemaBuilder::class, ['enumClass' => $backedEnumClass]);
     }
 }

@@ -1,9 +1,10 @@
 <?php
 
-namespace Strucura\Schema;
+namespace Strucura\Schema\Properties;
 
 class Property
 {
+    /** @var array<string, mixed> */
     private array $attributes = [];
 
     public function __construct(
@@ -11,7 +12,12 @@ class Property
         private readonly bool $required = false
     ) {}
 
-    public function setAttribute(string $key, $value): self
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @return self
+     */
+    public function setAttribute(string $key, mixed $value): self
     {
         $this->attributes[$key] = $value;
 
@@ -23,6 +29,9 @@ class Property
         return $this->required;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return array_merge(

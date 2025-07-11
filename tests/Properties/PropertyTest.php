@@ -1,6 +1,6 @@
 <?php
 
-use Strucura\Schema\Property;
+use Strucura\Schema\Properties\Property;
 
 it('can create a property with type and required flag', function () {
     $property = new Property('string', true);

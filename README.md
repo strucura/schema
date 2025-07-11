@@ -1,8 +1,8 @@
 # Schema
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/strucura/schema.svg?style=flat-square)](https://packagist.org/packages/strucura/schema)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/strucura/schema/run-tests.yml?branch=1.x&label=tests&style=flat-square)](https://github.com/strucura/schema/actions?query=workflow%3Arun-tests+branch%3A1.x)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/strucura/schema/fix-php-code-style-issues.yml?branch=1.x&label=code%20style&style=flat-square)](https://github.com/strucura/schema/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3A1.x)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/strucura/schema/run-tests.yml?branch=0.x&label=tests&style=flat-square)](https://github.com/strucura/schema/actions?query=workflow%3Arun-tests+branch%3A0.x)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/strucura/schema/fix-php-code-style-issues.yml?branch=0.x&label=code%20style&style=flat-square)](https://github.com/strucura/schema/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3A0.x)
 [![Total Downloads](https://img.shields.io/packagist/dt/strucura/schema.svg?style=flat-square)](https://packagist.org/packages/strucura/schema)
 
 > [!WARNING]  

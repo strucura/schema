@@ -95,3 +95,48 @@ it('can add a reference property', function () {
         ],
     ]);
 });
+
+it('can add a float property', function () {
+    $schema = new ObjectSchemaBuilder;
+    $schema->addFloat('price', true);
+
+    expect($schema->toArray())->toMatchArray([
+        'type' => 'object',
+        'properties' => [
+            'price' => [
+                'type' => 'float',
+                'required' => true,
+            ],
+        ],
+    ]);
+});
+
+it('can add a date property', function () {
+    $schema = new ObjectSchemaBuilder;
+    $schema->addDate('created_at', true);
+
+    expect($schema->toArray())->toMatchArray([
+        'type' => 'object',
+        'properties' => [
+            'created_at' => [
+                'type' => 'date',
+                'required' => true,
+            ],
+        ],
+    ]);
+});
+
+it('can add a datetime property', function () {
+    $schema = new ObjectSchemaBuilder;
+    $schema->addDateTime('updated_at', false);
+
+    expect($schema->toArray())->toMatchArray([
+        'type' => 'object',
+        'properties' => [
+            'updated_at' => [
+                'type' => 'datetime',
+                'required' => false,
+            ],
+        ],
+    ]);
+});

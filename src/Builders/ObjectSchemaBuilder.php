@@ -34,6 +34,21 @@ class ObjectSchemaBuilder
         return $this->addProperty($name, 'boolean', $isRequired);
     }
 
+    public function addDate(string $name, bool $isRequired = false): self
+    {
+        return $this->addProperty($name, 'date', $isRequired);
+    }
+
+    public function addDateTime(string $name, bool $isRequired = false): self
+    {
+        return $this->addProperty($name, 'datetime', $isRequired);
+    }
+
+    public function addFloat(string $name, bool $isRequired = false): self
+    {
+        return $this->addProperty($name, 'float', $isRequired);
+    }
+
     public function addArray(string $name, string|callable $items, bool $isRequired = false): self
     {
         return $this->addProperty($name, 'array', $isRequired, function (Property $property) use ($items) {

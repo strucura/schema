@@ -68,7 +68,7 @@ class ObjectSchemaBuilder
         return $this->addProperty($name, $type, $isRequired);
     }
 
-    public function addProperty(string $name, string $type, bool $isRequired = false, ?\Closure $callback = null): self
+    protected function addProperty(string $name, string $type, bool $isRequired = false, ?\Closure $callback = null): self
     {
         $property = new Property($type, $isRequired);
 

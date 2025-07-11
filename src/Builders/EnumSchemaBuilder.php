@@ -2,7 +2,4 @@
 
 namespace Strucura\Schema\Builders;
 
-class EnumSchemaBuilder
-{
-
-}
+class EnumSchemaBuilder {}

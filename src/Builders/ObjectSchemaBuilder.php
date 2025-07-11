@@ -11,6 +11,7 @@ class ObjectSchemaBuilder
     use Macroable;
 
     private array $properties = [];
+
     private string $type;
 
     public function __construct(string $type = 'object')
@@ -37,7 +38,7 @@ class ObjectSchemaBuilder
     {
         return $this->addProperty($name, 'array', $isRequired, function (Property $property) use ($items) {
             if (is_callable($items)) {
-                $nestedDefinition = new Schema();
+                $nestedDefinition = new Schema;
                 $items($nestedDefinition);
                 $property->setAttribute('items', $nestedDefinition->toArray());
             } else {
@@ -56,10 +57,15 @@ class ObjectSchemaBuilder
     public function addObject(string $name, \Closure $callback, bool $isRequired = false): self
     {
         return $this->addProperty($name, 'object', $isRequired, function (Property $property) use ($callback) {
-            $nestedDefinition = new ObjectSchemaBuilder();
+            $nestedDefinition = new ObjectSchemaBuilder;
             $callback($nestedDefinition);
             $property->setAttribute('properties', $nestedDefinition->toArray()['properties']);
         });
+    }
+
+    public function addReference(string $name, string $type, bool $isRequired): self
+    {
+        return $this->addProperty($name, $type, $isRequired);
     }
 
     public function addProperty(string $name, string $type, bool $isRequired = false, ?\Closure $callback = null): self
@@ -71,13 +77,14 @@ class ObjectSchemaBuilder
         }
 
         $this->properties[$name] = $property;
+
         return $this;
     }
 
     public function toArray(): array
     {
         $properties = array_map(
-            fn($property) => $property->toArray(),
+            fn ($property) => $property->toArray(),
             $this->properties
         );
 

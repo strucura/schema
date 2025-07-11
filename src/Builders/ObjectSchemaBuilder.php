@@ -48,10 +48,7 @@ class ObjectSchemaBuilder
     }
 
     /**
-     * @param string $name
-     * @param array<string|int|float> $values
-     * @param bool $isRequired
-     * @return self
+     * @param  array<string|int|float>  $values
      */
     public function addEnum(string $name, array $values, bool $isRequired = false): self
     {
@@ -74,13 +71,6 @@ class ObjectSchemaBuilder
         return $this->addProperty($name, $type, $isRequired);
     }
 
-    /**
-     * @param string $name
-     * @param string $type
-     * @param bool $isRequired
-     * @param \Closure|null $callback
-     * @return self
-     */
     protected function addProperty(string $name, string $type, bool $isRequired = false, ?\Closure $callback = null): self
     {
         $property = new Property($type, $isRequired);

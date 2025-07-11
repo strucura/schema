@@ -12,11 +12,6 @@ class Property
         private readonly bool $required = false
     ) {}
 
-    /**
-     * @param string $key
-     * @param mixed $value
-     * @return self
-     */
     public function setAttribute(string $key, mixed $value): self
     {
         $this->attributes[$key] = $value;

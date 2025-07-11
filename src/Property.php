@@ -14,6 +14,7 @@ class Property
     public function setAttribute(string $key, $value): self
     {
         $this->attributes[$key] = $value;
+
         return $this;
     }
 

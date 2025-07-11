@@ -4,7 +4,6 @@ namespace Strucura\Schema;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Strucura\Schema\Commands\SchemaCommand;
 
 class SchemaServiceProvider extends PackageServiceProvider
 {

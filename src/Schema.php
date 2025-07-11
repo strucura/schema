@@ -2,7 +2,6 @@
 
 namespace Strucura\Schema;
 
-use BackedEnum;
 use Strucura\Schema\Builders\EnumSchemaBuilder;
 use Strucura\Schema\Builders\ObjectSchemaBuilder;
 

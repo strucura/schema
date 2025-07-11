@@ -4,15 +4,12 @@ namespace Strucura\Schema;
 
 class Property
 {
-    private string $type;
     private array $attributes = [];
-    private bool $required = false;
 
-    public function __construct(string $type, bool $required = false)
-    {
-        $this->type = $type;
-        $this->required = $required;
-    }
+    public function __construct(
+        private readonly string $type,
+        private readonly bool $required = false
+    ) {}
 
     public function setAttribute(string $key, $value): self
     {

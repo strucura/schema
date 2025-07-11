@@ -5,6 +5,9 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/strucura/schema/fix-php-code-style-issues.yml?branch=1.x&label=code%20style&style=flat-square)](https://github.com/strucura/schema/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3A1.x)
 [![Total Downloads](https://img.shields.io/packagist/dt/strucura/schema.svg?style=flat-square)](https://packagist.org/packages/strucura/schema)
 
+> [!WARNING]  
+> This is not ready for production usage.
+
 The Strucura Schema package provides a flexible and intuitive way to define and manage data schemas in PHP. It allows developers to create structured schemas with various property types, including strings, integers, booleans, arrays, objects, and enums. The package supports nested schemas, inline enums, and backed enums, making it ideal for building complex data structures. Designed for Laravel, it integrates seamlessly with the framework and includes tools for configuration, migrations, and views.
 
 ## Installation

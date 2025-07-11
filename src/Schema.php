@@ -4,8 +4,10 @@ namespace Strucura\Schema;
 
 use BackedEnum;
 
-class Schema {
+class Schema
+{
     private array $properties = [];
+
     private string $type;
 
     public function __construct(string $type = 'object')
@@ -32,7 +34,7 @@ class Schema {
     {
         return $this->addProperty($name, 'array', $isRequired, function (Property $property) use ($items) {
             if (is_callable($items)) {
-                $nestedDefinition = new Schema();
+                $nestedDefinition = new Schema;
                 $items($nestedDefinition);
                 $property->setAttribute('items', $nestedDefinition->toArray());
             } else {
@@ -49,7 +51,7 @@ class Schema {
     public function addBackedEnum(string $name, BackedEnum $enum, bool $isRequired = false): self
     {
         return $this->addProperty($name, 'string', $isRequired, function (Property $property) use ($enum) {
-            $values = array_map(fn($case) => $case->value, $enum::cases());
+            $values = array_map(fn ($case) => $case->value, $enum::cases());
             $property->setAttribute('enum', $values);
         });
     }
@@ -64,7 +66,7 @@ class Schema {
     public function addObject(string $name, \Closure $callback, bool $isRequired = false): self
     {
         return $this->addProperty($name, 'object', $isRequired, function (Property $property) use ($callback) {
-            $nestedDefinition = new Schema();
+            $nestedDefinition = new Schema;
             $callback($nestedDefinition);
             $property->setAttribute('properties', $nestedDefinition->toArray()['properties']);
         });
@@ -79,13 +81,14 @@ class Schema {
         }
 
         $this->properties[$name] = $property;
+
         return $this;
     }
 
     public function toArray(): array
     {
         $properties = array_map(
-            fn($property) => $property->toArray(),
+            fn ($property) => $property->toArray(),
             $this->properties
         );
 

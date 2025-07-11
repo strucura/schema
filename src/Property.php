@@ -5,7 +5,9 @@ namespace Strucura\Schema;
 class Property
 {
     private string $type;
+
     private array $attributes = [];
+
     private bool $required = false;
 
     public function __construct(string $type, bool $required = false)
@@ -17,6 +19,7 @@ class Property
     public function setAttribute(string $key, $value): self
     {
         $this->attributes[$key] = $value;
+
         return $this;
     }
 

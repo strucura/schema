@@ -3,6 +3,7 @@
 namespace Strucura\Schema\Builders;
 
 use Illuminate\Support\Traits\Macroable;
+use Strucura\Schema\Enums\PropertyTypeEnum;
 use Strucura\Schema\Properties\Property;
 
 class ObjectSchemaBuilder
@@ -19,39 +20,84 @@ class ObjectSchemaBuilder
         $this->type = $type;
     }
 
-    public function addString(string $name, bool $isRequired = false): self
+    /**
+     * Creates a property of type string
+     */
+    public function string(string $name, bool $isRequired = false): self
     {
-        return $this->addProperty($name, 'string', $isRequired);
+        return $this->addProperty($name, PropertyTypeEnum::STRING->value, $isRequired);
     }
 
-    public function addInteger(string $name, bool $isRequired = false): self
+    /**
+     * Creates a property of type integer
+     */
+    public function integer(string $name, bool $isRequired = false): self
     {
-        return $this->addProperty($name, 'integer', $isRequired);
+        return $this->addProperty($name, PropertyTypeEnum::INTEGER->value, $isRequired);
     }
 
-    public function addBoolean(string $name, bool $isRequired = false): self
+    /**
+     * Creates a property of type boolean
+     */
+    public function boolean(string $name, bool $isRequired = false): self
     {
-        return $this->addProperty($name, 'boolean', $isRequired);
+        return $this->addProperty($name, PropertyTypeEnum::BOOLEAN->value, $isRequired);
     }
 
-    public function addDate(string $name, bool $isRequired = false): self
+    /**
+     * Creates a property of type date
+     */
+    public function date(string $name, bool $isRequired = false): self
     {
-        return $this->addProperty($name, 'date', $isRequired);
+        return $this->addProperty($name, PropertyTypeEnum::DATE->value, $isRequired);
     }
 
-    public function addDateTime(string $name, bool $isRequired = false): self
+    /**
+     * Creates a property of type date time
+     */
+    public function dateTime(string $name, bool $isRequired = false): self
     {
-        return $this->addProperty($name, 'datetime', $isRequired);
+        return $this->addProperty($name, PropertyTypeEnum::DATETIME->value, $isRequired);
     }
 
-    public function addFloat(string $name, bool $isRequired = false): self
+    /**
+     * Creates a property of type float
+     */
+    public function float(string $name, bool $isRequired = false): self
     {
-        return $this->addProperty($name, 'float', $isRequired);
+        return $this->addProperty($name, PropertyTypeEnum::FLOAT->value, $isRequired);
     }
 
-    public function addArray(string $name, string|callable $items, bool $isRequired = false): self
+    /**
+     * Creates a property of type byte
+     */
+    public function byte(string $name, bool $isRequired = false): self
     {
-        return $this->addProperty($name, 'array', $isRequired, function (Property $property) use ($items) {
+        return $this->addProperty($name, PropertyTypeEnum::BYTE->value, $isRequired);
+    }
+
+    /**
+     * Creates a property of type binary
+     */
+    public function binary(string $name, bool $isRequired = false): self
+    {
+        return $this->addProperty($name, PropertyTypeEnum::BINARY->value, $isRequired);
+    }
+
+    /**
+     * Creates a property of type decimal
+     */
+    public function decimal(string $name, bool $isRequired = false): self
+    {
+        return $this->addProperty($name, PropertyTypeEnum::DECIMAL->value, $isRequired);
+    }
+
+    /**
+     * Creates a property that is an array of items
+     */
+    public function arrayOf(string $name, string|callable $items, bool $isRequired = false): self
+    {
+        return $this->addProperty($name, PropertyTypeEnum::ARRAY->value, $isRequired, function (Property $property) use ($items) {
             if (is_callable($items)) {
                 $nestedDefinition = new self;
                 $items($nestedDefinition);
@@ -63,29 +109,54 @@ class ObjectSchemaBuilder
     }
 
     /**
-     * @param  array<string|int|float>  $values
+     * Creates a property that is an inline enum
+     *
+     * @param  array<string|PropertyTypeEnum>  $values
      */
-    public function addEnum(string $name, array $values, bool $isRequired = false): self
+    public function enum(string $name, array $values, bool $isRequired = false): self
     {
-        return $this->addProperty($name, 'enum', $isRequired, function (Property $property) use ($values) {
+        return $this->addProperty($name, PropertyTypeEnum::ENUM->value, $isRequired, function (Property $property) use ($values) {
             $property->setAttribute('enum', $values);
         });
     }
 
-    public function addObject(string $name, \Closure $callback, bool $isRequired = false): self
+    /**
+     * Creates a property that is a nested object
+     */
+    public function object(string $name, \Closure $callback, bool $isRequired = false): self
     {
-        return $this->addProperty($name, 'object', $isRequired, function (Property $property) use ($callback) {
+        return $this->addProperty($name, PropertyTypeEnum::OBJECT->value, $isRequired, function (Property $property) use ($callback) {
             $nestedDefinition = new self;
             $callback($nestedDefinition);
             $property->setAttribute('properties', $nestedDefinition->toArray()['properties']);
         });
     }
 
-    public function addReference(string $name, string $type, bool $isRequired): self
+    /**
+     * Creates a property that is a reference to another schema
+     */
+    public function reference(string $name, string $type, bool $isRequired): self
     {
         return $this->addProperty($name, $type, $isRequired);
     }
 
+    /**
+     * Creates a property that can be one or more types
+     *
+     * @param  string  $name  The name of the property.
+     * @param  array<string|PropertyTypeEnum>  $types  An array of types, which can be either the string "string" or valid PropertyTypeEnum values.
+     * @param  bool  $isRequired  Whether the property is required.
+     */
+    public function anyOf(string $name, array $types, bool $isRequired = false): self
+    {
+        return $this->addProperty($name, PropertyTypeEnum::ANY_OF->value, $isRequired, function (Property $property) use ($types) {
+            $property->setAttribute('types', $types);
+        });
+    }
+
+    /**
+     * Base property creation functionality
+     */
     protected function addProperty(string $name, string $type, bool $isRequired = false, ?\Closure $callback = null): self
     {
         $property = new Property($type, $isRequired);
@@ -100,6 +171,8 @@ class ObjectSchemaBuilder
     }
 
     /**
+     * Converts schema to an array
+     *
      * @return array<string, mixed>
      */
     public function toArray(): array

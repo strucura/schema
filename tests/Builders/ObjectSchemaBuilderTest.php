@@ -1,6 +1,7 @@
 <?php
 
 use Strucura\Schema\Builders\ObjectSchemaBuilder;
+use Strucura\Schema\Enums\PropertyTypeEnum;
 
 it('can create a default schema', function () {
     $schema = new ObjectSchemaBuilder;
@@ -13,9 +14,9 @@ it('can create a default schema', function () {
 
 it('can add string, integer, and boolean properties', function () {
     $schema = new ObjectSchemaBuilder;
-    $schema->addString('name', true)
-        ->addInteger('age')
-        ->addBoolean('is_active', true);
+    $schema->string('name', true)
+        ->integer('age')
+        ->boolean('is_active', true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -29,7 +30,7 @@ it('can add string, integer, and boolean properties', function () {
 
 it('can add an array property with nested items', function () {
     $schema = new ObjectSchemaBuilder;
-    $schema->addArray('tags', 'string', true);
+    $schema->arrayOf('tags', 'string', true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -45,9 +46,9 @@ it('can add an array property with nested items', function () {
 
 it('can add an object property with nested schema', function () {
     $schema = new ObjectSchemaBuilder;
-    $schema->addObject('address', function (ObjectSchemaBuilder $nested) {
-        $nested->addString('street', true)
-            ->addString('city', true);
+    $schema->object('address', function (ObjectSchemaBuilder $nested) {
+        $nested->string('street', true)
+            ->string('city', true);
     });
 
     expect($schema->toArray())->toMatchArray([
@@ -67,7 +68,7 @@ it('can add an object property with nested schema', function () {
 
 it('can add an enum property', function () {
     $schema = new ObjectSchemaBuilder;
-    $schema->addEnum('status', ['active', 'inactive'], true);
+    $schema->enum('status', ['active', 'inactive'], true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -83,7 +84,7 @@ it('can add an enum property', function () {
 
 it('can add a reference property', function () {
     $schema = new ObjectSchemaBuilder;
-    $schema->addReference('user', 'User', true);
+    $schema->reference('user', 'User', true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -98,7 +99,7 @@ it('can add a reference property', function () {
 
 it('can add a float property', function () {
     $schema = new ObjectSchemaBuilder;
-    $schema->addFloat('price', true);
+    $schema->float('price', true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -113,7 +114,7 @@ it('can add a float property', function () {
 
 it('can add a date property', function () {
     $schema = new ObjectSchemaBuilder;
-    $schema->addDate('created_at', true);
+    $schema->date('created_at', true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -128,7 +129,7 @@ it('can add a date property', function () {
 
 it('can add a datetime property', function () {
     $schema = new ObjectSchemaBuilder;
-    $schema->addDateTime('updated_at', false);
+    $schema->dateTime('updated_at', false);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -136,6 +137,67 @@ it('can add a datetime property', function () {
             'updated_at' => [
                 'type' => 'datetime',
                 'required' => false,
+            ],
+        ],
+    ]);
+});
+
+it('can add a byte property', function () {
+    $schema = new ObjectSchemaBuilder;
+    $schema->byte('file_hash', true);
+
+    expect($schema->toArray())->toMatchArray([
+        'type' => 'object',
+        'properties' => [
+            'file_hash' => [
+                'type' => 'byte',
+                'required' => true,
+            ],
+        ],
+    ]);
+});
+
+it('can add a binary property', function () {
+    $schema = new ObjectSchemaBuilder;
+    $schema->binary('file_data', false);
+
+    expect($schema->toArray())->toMatchArray([
+        'type' => 'object',
+        'properties' => [
+            'file_data' => [
+                'type' => 'binary',
+                'required' => false,
+            ],
+        ],
+    ]);
+});
+
+it('can add a decimal property', function () {
+    $schema = new ObjectSchemaBuilder;
+    $schema->decimal('amount', true);
+
+    expect($schema->toArray())->toMatchArray([
+        'type' => 'object',
+        'properties' => [
+            'amount' => [
+                'type' => 'decimal',
+                'required' => true,
+            ],
+        ],
+    ]);
+});
+
+it('can add a property with anyOf types', function () {
+    $schema = new ObjectSchemaBuilder;
+    $schema->anyOf('mixed_property', ['string', PropertyTypeEnum::INTEGER->value], true);
+
+    expect($schema->toArray())->toMatchArray([
+        'type' => 'object',
+        'properties' => [
+            'mixed_property' => [
+                'type' => 'anyOf',
+                'required' => true,
+                'types' => ['string', 'integer'],
             ],
         ],
     ]);

@@ -115,7 +115,7 @@ it('can add an enum property', function () {
             'status' => [
                 'type' => 'enum',
                 'required' => true,
-                'enum' => ['active', 'inactive'],
+                'subtype' => ['active', 'inactive'],
             ],
         ],
     ]);

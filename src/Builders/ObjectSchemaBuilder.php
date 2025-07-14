@@ -123,7 +123,7 @@ class ObjectSchemaBuilder
     public function enum(string $name, array $values, bool $isRequired = false): self
     {
         return $this->addProperty($name, PropertyTypeEnum::ENUM->value, $isRequired, function (Property $property) use ($values) {
-            $property->setAttribute('enum', $values);
+            $property->setAttribute('subtype', $values);
         });
     }
 

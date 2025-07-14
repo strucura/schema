@@ -8,7 +8,7 @@
 > [!WARNING]  
 > This is not ready for production usage.
 
-The Strucura Schema package provides a flexible and intuitive way to define and manage data schemas in PHP. It allows developers to create structured schemas with various property types, including strings, integers, booleans, arrays, objects, and enums. The package supports nested schemas, inline enums, and backed enums, making it ideal for building complex data structures. Designed for Laravel, it integrates seamlessly with the framework and includes tools for configuration, migrations, and views.
+The Schema package provides a flexible and intuitive way to define and manage data schemas in PHP. It allows developers to create structured schemas with various property types, including strings, integers, booleans, arrays, objects, and enums. The package supports nested schemas, inline enums, and backed enums, making it ideal for building complex data structures. Designed for Laravel, it integrates seamlessly with the framework and includes tools for configuration, migrations, and views.
 
 ## Installation
 
@@ -16,6 +16,82 @@ You can install the package via composer:
 
 ```bash
 composer require strucura/schema
+```
+
+## Usage
+
+```php
+<?php
+
+use Strucura\Schema\Facades\Schema;
+use Strucura\Schema\Enums\PropertyTypeEnum;
+
+// Create an object schema
+$schema = Schema::object()
+    // Add properties to the schema
+    ->string('name', true) // Required string property
+    ->integer('age', false) // Optional integer property
+    ->enum('status', ['active', 'inactive'], true) // Required enum property
+    ->float('price', true) // Required float property
+    ->date('created_at', true) // Required date property
+    ->anyOf('mixed_property', ['string', PropertyTypeEnum::INTEGER->value], true); // Required anyOf property
+    ->object('address', function ($nested) {
+        $nested->string('street', true);
+        $nested->string('city', true);
+    }, false); // Optional nested object
+
+// Convert the schema to an array
+$schemaArray = $schema->toArray();
+
+// Output the schema
+print_r($schemaArray);
+
+// Renders
+[
+    'type' => 'object',
+    'properties' => [
+        'name' => [
+            'type' => 'string',
+            'required' => true,
+        ],
+        'age' => [
+            'type' => 'integer',
+            'required' => false,
+        ],
+        'status' => [
+            'type' => 'enum',
+            'required' => true,
+            'enum' => ['active', 'inactive'],
+        ],
+        'price' => [
+            'type' => 'float',
+            'required' => true,
+        ],
+        'created_at' => [
+            'type' => 'date',
+            'required' => true,
+        ],
+        'mixed_property' => [
+            'type' => 'anyOf',
+            'required' => true,
+            'types' => ['string', 'integer'],
+        ],
+        'address' => [
+            'type' => 'object',
+            'required' => false,
+            'properties' => [
+                'street' => [
+                    'type' => 'string',
+                    'required' => true,
+                ],
+                'city' => [
+                    'type' => 'string',
+                    'required' => true,
+                ],
+            ],
+        ],
+    ],
+];
 ```
 
 ## Testing

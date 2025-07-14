@@ -94,17 +94,31 @@ class ObjectSchemaBuilder
 
     /**
      * Creates a property that is an array of items
+     *
+     * @param  string|PropertyTypeEnum|array<string|PropertyTypeEnum>|\Closure  $items  A single type, an array of types, or a callable for nested schema.
      */
-    public function arrayOf(string $name, string|callable $items, bool $isRequired = false): self
+    public function arrayOf(string $name, PropertyTypeEnum|string|array|\Closure $items, bool $isRequired = false): self
     {
-        return $this->addProperty($name, PropertyTypeEnum::ARRAY->value, $isRequired, function (Property $property) use ($items) {
-            if (is_callable($items)) {
+        return $this->addProperty($name, PropertyTypeEnum::ARRAY_OF->value, $isRequired, function (Property $property) use ($items) {
+            if ($items instanceof \Closure) {
                 $nestedDefinition = new self;
                 $items($nestedDefinition);
                 $property->setAttribute('items', $nestedDefinition->toArray());
-            } else {
-                $property->setAttribute('items', ['type' => $items]);
+
+                return $this;
             }
+
+            $property->setAttribute('items', [
+                'type' => match (true) {
+                    is_array($items) => collect($items)->map(function ($item) {
+                        return $item instanceof PropertyTypeEnum ? $item->value : $item;
+                    })->toArray(),
+
+                    $items instanceof PropertyTypeEnum => [$items->value],
+
+                    default => [$items],
+                },
+            ]);
         });
     }
 

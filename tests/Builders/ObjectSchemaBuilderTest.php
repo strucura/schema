@@ -36,9 +36,52 @@ it('can add an array property with nested items', function () {
         'type' => 'object',
         'properties' => [
             'tags' => [
-                'type' => 'array',
+                'type' => 'arrayOf',
                 'required' => true,
-                'items' => ['type' => 'string'],
+                'items' => ['type' => ['string']],
+            ],
+        ],
+    ]);
+});
+
+it('can add an array property with object items', function () {
+    $schema = new ObjectSchemaBuilder;
+    $schema->arrayOf('addresses', function (ObjectSchemaBuilder $nested) {
+        $nested->string('street', true)
+            ->string('city', true);
+    }, true);
+
+    expect($schema->toArray())->toMatchArray([
+        'type' => 'object',
+        'properties' => [
+            'addresses' => [
+                'type' => 'arrayOf',
+                'required' => true,
+                'items' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'street' => ['type' => 'string', 'required' => true],
+                        'city' => ['type' => 'string', 'required' => true],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+});
+
+it('can add an array property with multiple types', function () {
+    $schema = new ObjectSchemaBuilder;
+    $schema->arrayOf('is_enabled', [PropertyTypeEnum::BOOLEAN, PropertyTypeEnum::BYTE], true);
+
+    expect($schema->toArray())->toMatchArray([
+        'type' => 'object',
+        'properties' => [
+            'is_enabled' => [
+                'type' => 'arrayOf',
+                'required' => true,
+                'items' => [
+                    'type' => ['boolean', 'byte'],
+                ],
             ],
         ],
     ]);

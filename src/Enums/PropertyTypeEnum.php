@@ -13,7 +13,7 @@ enum PropertyTypeEnum: string
     case BYTE = 'byte';
     case BINARY = 'binary';
     case DECIMAL = 'decimal';
-    case ARRAY = 'array';
+    case ARRAY_OF = 'arrayOf';
     case ENUM = 'enum';
     case OBJECT = 'object';
     case REFERENCE = 'reference';

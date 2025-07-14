@@ -157,7 +157,7 @@ class ObjectSchemaBuilder
     public function anyOf(string $name, array $types, bool $isRequired = false): self
     {
         return $this->addProperty($name, PropertyTypeEnum::ANY_OF->value, $isRequired, function (Property $property) use ($types) {
-            $property->setAttribute('subtypes', $types);
+            $property->setAttribute('subtype', $types);
         });
     }
 

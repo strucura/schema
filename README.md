@@ -74,7 +74,7 @@ print_r($schemaArray);
         'mixed_property' => [
             'type' => 'anyOf',
             'required' => true,
-            'types' => ['string', 'integer'],
+            'subtype' => ['string', 'integer'],
         ],
         'address' => [
             'type' => 'object',

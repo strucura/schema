@@ -38,7 +38,7 @@ it('can add an array property with nested items', function () {
             'tags' => [
                 'type' => 'arrayOf',
                 'required' => true,
-                'items' => ['type' => ['string']],
+                'subtype' => ['string'],
             ],
         ],
     ]);
@@ -57,7 +57,7 @@ it('can add an array property with object items', function () {
             'addresses' => [
                 'type' => 'arrayOf',
                 'required' => true,
-                'items' => [
+                'subtype' => [
                     'type' => 'object',
                     'properties' => [
                         'street' => ['type' => 'string', 'required' => true],
@@ -79,9 +79,7 @@ it('can add an array property with multiple types', function () {
             'is_enabled' => [
                 'type' => 'arrayOf',
                 'required' => true,
-                'items' => [
-                    'type' => ['boolean', 'byte'],
-                ],
+                'subtype' => ['boolean', 'byte'],
             ],
         ],
     ]);

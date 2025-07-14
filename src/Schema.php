@@ -7,9 +7,9 @@ use Strucura\Schema\Builders\ObjectSchemaBuilder;
 
 class Schema
 {
-    public function object(): ObjectSchemaBuilder
+    public function object(string $type): ObjectSchemaBuilder
     {
-        return app(ObjectSchemaBuilder::class);
+        return app(ObjectSchemaBuilder::class, ['type' => $type]);
     }
 
     public function enum(string $backedEnumClass): BackedEnumSchemaBuilder

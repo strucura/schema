@@ -14,6 +14,7 @@ class SchemaServiceProvider extends PackageServiceProvider
          *
          * More info: https://github.com/spatie/laravel-package-tools
          */
-        $package->name('schema');
+        $package->name('schema')
+            ->hasViews();
     }
 }

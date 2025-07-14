@@ -2,9 +2,10 @@
 
 use Strucura\Schema\Builders\ObjectSchemaBuilder;
 use Strucura\Schema\Enums\PropertyTypeEnum;
+use Strucura\Schema\Facades\Schema;
 
 it('can create a default schema', function () {
-    $schema = new ObjectSchemaBuilder;
+    $schema = Schema::object('object');
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -13,8 +14,8 @@ it('can create a default schema', function () {
 });
 
 it('can add string, integer, and boolean properties', function () {
-    $schema = new ObjectSchemaBuilder;
-    $schema->string('name', true)
+    $schema = Schema::object('object')
+        ->string('name', true)
         ->integer('age')
         ->boolean('is_active', true);
 
@@ -29,8 +30,8 @@ it('can add string, integer, and boolean properties', function () {
 });
 
 it('can add an array property with nested items', function () {
-    $schema = new ObjectSchemaBuilder;
-    $schema->arrayOf('tags', 'string', true);
+    $schema = Schema::object('object')
+        ->arrayOf('tags', 'string', true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -45,11 +46,11 @@ it('can add an array property with nested items', function () {
 });
 
 it('can add an array property with object items', function () {
-    $schema = new ObjectSchemaBuilder;
-    $schema->arrayOf('addresses', function (ObjectSchemaBuilder $nested) {
-        $nested->string('street', true)
-            ->string('city', true);
-    }, true);
+    $schema = Schema::object('object')
+        ->arrayOf('addresses', function (ObjectSchemaBuilder $nested) {
+            $nested->string('street', true)
+                ->string('city', true);
+        }, true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -70,8 +71,7 @@ it('can add an array property with object items', function () {
 });
 
 it('can add an array property with multiple types', function () {
-    $schema = new ObjectSchemaBuilder;
-    $schema->arrayOf('is_enabled', [PropertyTypeEnum::BOOLEAN, PropertyTypeEnum::BYTE], true);
+    $schema = Schema::object('object')->arrayOf('is_enabled', [PropertyTypeEnum::BOOLEAN, PropertyTypeEnum::BYTE], true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -86,8 +86,7 @@ it('can add an array property with multiple types', function () {
 });
 
 it('can add an object property with nested schema', function () {
-    $schema = new ObjectSchemaBuilder;
-    $schema->object('address', function (ObjectSchemaBuilder $nested) {
+    $schema = Schema::object('object')->object('address', function (ObjectSchemaBuilder $nested) {
         $nested->string('street', true)
             ->string('city', true);
     });
@@ -108,8 +107,7 @@ it('can add an object property with nested schema', function () {
 });
 
 it('can add an enum property', function () {
-    $schema = new ObjectSchemaBuilder;
-    $schema->enum('status', ['active', 'inactive'], true);
+    $schema = Schema::object('object')->enum('status', ['active', 'inactive'], true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -124,8 +122,7 @@ it('can add an enum property', function () {
 });
 
 it('can add a reference property', function () {
-    $schema = new ObjectSchemaBuilder;
-    $schema->reference('user', 'User', true);
+    $schema = Schema::object('object')->reference('user', 'User', true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -139,8 +136,7 @@ it('can add a reference property', function () {
 });
 
 it('can add a float property', function () {
-    $schema = new ObjectSchemaBuilder;
-    $schema->float('price', true);
+    $schema = Schema::object('object')->float('price', true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -154,8 +150,7 @@ it('can add a float property', function () {
 });
 
 it('can add a date property', function () {
-    $schema = new ObjectSchemaBuilder;
-    $schema->date('created_at', true);
+    $schema = Schema::object('object')->date('created_at', true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -169,8 +164,7 @@ it('can add a date property', function () {
 });
 
 it('can add a datetime property', function () {
-    $schema = new ObjectSchemaBuilder;
-    $schema->dateTime('updated_at', false);
+    $schema = Schema::object('object')->dateTime('updated_at', false);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -184,8 +178,7 @@ it('can add a datetime property', function () {
 });
 
 it('can add a byte property', function () {
-    $schema = new ObjectSchemaBuilder;
-    $schema->byte('file_hash', true);
+    $schema = Schema::object('object')->byte('file_hash', true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -199,8 +192,7 @@ it('can add a byte property', function () {
 });
 
 it('can add a binary property', function () {
-    $schema = new ObjectSchemaBuilder;
-    $schema->binary('file_data', false);
+    $schema = Schema::object('object')->binary('file_data', false);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -214,8 +206,7 @@ it('can add a binary property', function () {
 });
 
 it('can add a decimal property', function () {
-    $schema = new ObjectSchemaBuilder;
-    $schema->decimal('amount', true);
+    $schema = Schema::object('object')->decimal('amount', true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -229,8 +220,8 @@ it('can add a decimal property', function () {
 });
 
 it('can add a property with anyOf types', function () {
-    $schema = new ObjectSchemaBuilder;
-    $schema->anyOf('mixed_property', ['string', PropertyTypeEnum::INTEGER->value], true);
+    $schema = Schema::object('object')
+        ->anyOf('mixed_property', ['string', PropertyTypeEnum::INTEGER->value], true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',

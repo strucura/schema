@@ -13,12 +13,7 @@ class ObjectSchemaBuilder
     /** @var array<string, Property> */
     private array $properties = [];
 
-    private string $type;
-
-    public function __construct(string $type = 'object')
-    {
-        $this->type = $type;
-    }
+    public function __construct(private string $type = 'object') {}
 
     /**
      * Creates a property of type string
@@ -162,7 +157,7 @@ class ObjectSchemaBuilder
     public function anyOf(string $name, array $types, bool $isRequired = false): self
     {
         return $this->addProperty($name, PropertyTypeEnum::ANY_OF->value, $isRequired, function (Property $property) use ($types) {
-            $property->setAttribute('types', $types);
+            $property->setAttribute('subtypes', $types);
         });
     }
 

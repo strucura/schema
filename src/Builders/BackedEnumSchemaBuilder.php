@@ -4,13 +4,16 @@ namespace Strucura\Schema\Builders;
 
 use BackedEnum;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Macroable;
 
 class BackedEnumSchemaBuilder
 {
+    use Macroable;
+
     private string $type;
 
     /** @var array<string, int|float|string> */
-    private array $enumValues = [];
+    private array $subtype = [];
 
     public function __construct(string $enumClass)
     {
@@ -27,7 +30,7 @@ class BackedEnumSchemaBuilder
             []
         );
 
-        $this->enumValues = $enumValues;
+        $this->subtype = $enumValues;
     }
 
     /**
@@ -37,7 +40,18 @@ class BackedEnumSchemaBuilder
     {
         return [
             'type' => $this->type,
-            'enum' => $this->enumValues,
+            'subtype' => $this->subtype,
         ];
+    }
+
+    public function toTypeScript(): string
+    {
+        /** @phpstan-var view-string $view */
+        $view = 'typescript.backed-enum';
+
+        return view($view, [
+            'type' => $this->type,
+            'subtype' => $this->subtype,
+        ])->render();
     }
 }

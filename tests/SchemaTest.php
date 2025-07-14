@@ -8,7 +8,7 @@ use Strucura\Schema\Tests\Mocks\BackedEnum;
 it('can create an object schema builder', function () {
     $schema = new Schema;
 
-    $objectBuilder = $schema->object();
+    $objectBuilder = $schema->object('object');
 
     expect($objectBuilder)->toBeInstanceOf(ObjectSchemaBuilder::class);
 });
@@ -21,7 +21,7 @@ it('can create a backed enum schema builder', function () {
     expect($enumBuilder)->toBeInstanceOf(BackedEnumSchemaBuilder::class)
         ->and($enumBuilder->toArray())->toMatchArray([
             'type' => 'BackedEnum',
-            'enum' => [
+            'subtype' => [
                 'ACTIVE' => 1,
                 'DISABLED' => 2,
             ],

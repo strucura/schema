@@ -9,7 +9,7 @@ it('can create a schema for a valid backed enum', function () {
 
     expect($builder->toArray())->toMatchArray([
         'type' => 'BackedEnum',
-        'enum' => [
+        'subtype' => [
             'ACTIVE' => 1,
             'DISABLED' => 2,
         ],
@@ -27,7 +27,7 @@ it('can output the correct array representation', function () {
     $schema = $builder->toArray();
 
     expect($schema['type'])->toBe('BackedEnum')
-        ->and($schema['enum'])->toMatchArray([
+        ->and($schema['subtype'])->toMatchArray([
             'ACTIVE' => 1,
             'DISABLED' => 2,
         ]);

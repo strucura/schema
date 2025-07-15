@@ -20,7 +20,7 @@ class ObjectSchemaBuilder
      */
     public function string(string $name, bool $isRequired = false): self
     {
-        return $this->addProperty($name, PropertyTypeEnum::STRING->value, $isRequired);
+        return $this->primitive($name, 'string', $isRequired);
     }
 
     /**
@@ -28,7 +28,7 @@ class ObjectSchemaBuilder
      */
     public function integer(string $name, bool $isRequired = false): self
     {
-        return $this->addProperty($name, PropertyTypeEnum::INTEGER->value, $isRequired);
+        return $this->primitive($name, 'integer', $isRequired);
     }
 
     /**
@@ -36,7 +36,7 @@ class ObjectSchemaBuilder
      */
     public function boolean(string $name, bool $isRequired = false): self
     {
-        return $this->addProperty($name, PropertyTypeEnum::BOOLEAN->value, $isRequired);
+        return $this->primitive($name, 'boolean', $isRequired);
     }
 
     /**
@@ -44,7 +44,7 @@ class ObjectSchemaBuilder
      */
     public function date(string $name, bool $isRequired = false): self
     {
-        return $this->addProperty($name, PropertyTypeEnum::DATE->value, $isRequired);
+        return $this->primitive($name, 'date', $isRequired);
     }
 
     /**
@@ -52,7 +52,7 @@ class ObjectSchemaBuilder
      */
     public function dateTime(string $name, bool $isRequired = false): self
     {
-        return $this->addProperty($name, PropertyTypeEnum::DATETIME->value, $isRequired);
+        return $this->primitive($name, 'datetime', $isRequired);
     }
 
     /**
@@ -60,7 +60,7 @@ class ObjectSchemaBuilder
      */
     public function float(string $name, bool $isRequired = false): self
     {
-        return $this->addProperty($name, PropertyTypeEnum::FLOAT->value, $isRequired);
+        return $this->primitive($name, 'float', $isRequired);
     }
 
     /**
@@ -68,7 +68,7 @@ class ObjectSchemaBuilder
      */
     public function byte(string $name, bool $isRequired = false): self
     {
-        return $this->addProperty($name, PropertyTypeEnum::BYTE->value, $isRequired);
+        return $this->primitive($name, 'byte', $isRequired);
     }
 
     /**
@@ -76,7 +76,7 @@ class ObjectSchemaBuilder
      */
     public function binary(string $name, bool $isRequired = false): self
     {
-        return $this->addProperty($name, PropertyTypeEnum::BINARY->value, $isRequired);
+        return $this->primitive($name, 'binary', $isRequired);
     }
 
     /**
@@ -84,7 +84,17 @@ class ObjectSchemaBuilder
      */
     public function decimal(string $name, bool $isRequired = false): self
     {
-        return $this->addProperty($name, PropertyTypeEnum::DECIMAL->value, $isRequired);
+        return $this->primitive($name, 'decimal', $isRequired);
+    }
+
+    /**
+     * Standardized means of creating primitive types
+     */
+    protected function primitive(string $name, string $primitiveType, bool $isRequired = false): self
+    {
+        return $this->addProperty($name, PropertyTypeEnum::PRIMITIVE, $isRequired, function (Property $property) use ($primitiveType) {
+            $property->setAttribute('subtype', $primitiveType);
+        });
     }
 
     /**
@@ -94,7 +104,7 @@ class ObjectSchemaBuilder
      */
     public function arrayOf(string $name, PropertyTypeEnum|string|array|\Closure $items, bool $isRequired = false): self
     {
-        return $this->addProperty($name, PropertyTypeEnum::ARRAY_OF->value, $isRequired, function (Property $property) use ($items) {
+        return $this->addProperty($name, PropertyTypeEnum::ARRAY_OF, $isRequired, function (Property $property) use ($items) {
             if ($items instanceof \Closure) {
                 $nestedDefinition = new self;
                 $items($nestedDefinition);
@@ -122,7 +132,7 @@ class ObjectSchemaBuilder
      */
     public function enum(string $name, array $values, bool $isRequired = false): self
     {
-        return $this->addProperty($name, PropertyTypeEnum::ENUM->value, $isRequired, function (Property $property) use ($values) {
+        return $this->addProperty($name, PropertyTypeEnum::ENUM, $isRequired, function (Property $property) use ($values) {
             $property->setAttribute('subtype', $values);
         });
     }
@@ -132,10 +142,10 @@ class ObjectSchemaBuilder
      */
     public function object(string $name, \Closure $callback, bool $isRequired = false): self
     {
-        return $this->addProperty($name, PropertyTypeEnum::OBJECT->value, $isRequired, function (Property $property) use ($callback) {
+        return $this->addProperty($name, PropertyTypeEnum::OBJECT, $isRequired, function (Property $property) use ($callback) {
             $nestedDefinition = new self;
             $callback($nestedDefinition);
-            $property->setAttribute('properties', $nestedDefinition->toArray()['properties']);
+            $property->setAttribute('subtype', $nestedDefinition->toArray()['properties']);
         });
     }
 
@@ -144,7 +154,9 @@ class ObjectSchemaBuilder
      */
     public function reference(string $name, string $type, bool $isRequired): self
     {
-        return $this->addProperty($name, $type, $isRequired);
+        return $this->addProperty($name, PropertyTypeEnum::REFERENCE, $isRequired, function (Property $property) use ($type) {
+            $property->setAttribute('subtype', $type);
+        });
     }
 
     /**
@@ -156,7 +168,7 @@ class ObjectSchemaBuilder
      */
     public function anyOf(string $name, array $types, bool $isRequired = false): self
     {
-        return $this->addProperty($name, PropertyTypeEnum::ANY_OF->value, $isRequired, function (Property $property) use ($types) {
+        return $this->addProperty($name, PropertyTypeEnum::ANY_OF, $isRequired, function (Property $property) use ($types) {
             $property->setAttribute('subtype', $types);
         });
     }
@@ -164,7 +176,7 @@ class ObjectSchemaBuilder
     /**
      * Base property creation functionality
      */
-    protected function addProperty(string $name, string $type, bool $isRequired = false, ?\Closure $callback = null): self
+    protected function addProperty(string $name, PropertyTypeEnum $type, bool $isRequired = false, ?\Closure $callback = null): self
     {
         $property = new Property($type, $isRequired);
 

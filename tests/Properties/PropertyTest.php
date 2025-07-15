@@ -1,41 +1,41 @@
 <?php
 
+use Strucura\Schema\Enums\PropertyTypeEnum;
 use Strucura\Schema\Properties\Property;
 
 it('can create a property with type and required flag', function () {
-    $property = new Property('string', true);
+    $property = new Property(PropertyTypeEnum::PRIMITIVE, true);
 
     expect($property->isRequired())->toBeTrue();
     expect($property->toArray())->toMatchArray([
-        'type' => 'string',
+        'type' => 'primitive',
         'required' => true,
     ]);
 });
 
 it('can set attributes', function () {
-    $property = new Property('integer');
-    $property->setAttribute('min', 1)->setAttribute('max', 10);
+    $property = new Property(PropertyTypeEnum::PRIMITIVE);
+    $property->setAttribute('subtype', 'integer');
 
     expect($property->toArray())->toMatchArray([
-        'type' => 'integer',
+        'type' => 'primitive',
+        'subtype' => 'integer',
         'required' => false,
-        'min' => 1,
-        'max' => 10,
     ]);
 });
 
 it('can check if property is required', function () {
-    $property = new Property('boolean', true);
+    $property = new Property(PropertyTypeEnum::PRIMITIVE, true);
 
     expect($property->isRequired())->toBeTrue();
 });
 
 it('can convert property to array', function () {
-    $property = new Property('array', false);
+    $property = new Property(PropertyTypeEnum::ARRAY_OF);
     $property->setAttribute('items', ['type' => 'string']);
 
     expect($property->toArray())->toMatchArray([
-        'type' => 'array',
+        'type' => 'arrayOf',
         'required' => false,
         'items' => ['type' => 'string'],
     ]);

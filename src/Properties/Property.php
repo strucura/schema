@@ -2,13 +2,15 @@
 
 namespace Strucura\Schema\Properties;
 
+use Strucura\Schema\Enums\PropertyTypeEnum;
+
 class Property
 {
     /** @var array<string, mixed> */
     private array $attributes = [];
 
     public function __construct(
-        private readonly string $type,
+        private readonly PropertyTypeEnum $type,
         private readonly bool $required = false
     ) {}
 
@@ -31,7 +33,7 @@ class Property
     {
         return array_merge(
             [
-                'type' => $this->type,
+                'type' => $this->type->value,
                 'required' => $this->required,
             ],
             $this->attributes

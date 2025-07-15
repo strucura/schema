@@ -1,7 +1,6 @@
 <?php
 
 use Strucura\Schema\Builders\ObjectSchemaBuilder;
-use Strucura\Schema\Enums\PropertyTypeEnum;
 use Strucura\Schema\Facades\Schema;
 
 it('can create a default schema', function () {
@@ -22,9 +21,9 @@ it('can add string, integer, and boolean properties', function () {
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
         'properties' => [
-            'name' => ['type' => 'string', 'required' => true],
-            'age' => ['type' => 'integer', 'required' => false],
-            'is_active' => ['type' => 'boolean', 'required' => true],
+            'name' => ['type' => 'primitive', 'subtype' => 'string', 'required' => true],
+            'age' => ['type' => 'primitive', 'subtype' => 'integer', 'required' => false],
+            'is_active' => ['type' => 'primitive', 'subtype' => 'boolean', 'required' => true],
         ],
     ]);
 });
@@ -61,8 +60,8 @@ it('can add an array property with object items', function () {
                 'subtype' => [
                     'type' => 'object',
                     'properties' => [
-                        'street' => ['type' => 'string', 'required' => true],
-                        'city' => ['type' => 'string', 'required' => true],
+                        'street' => ['type' => 'primitive', 'subtype' => 'string', 'required' => true],
+                        'city' => ['type' => 'primitive', 'subtype' => 'string', 'required' => true],
                     ],
                 ],
             ],
@@ -71,7 +70,7 @@ it('can add an array property with object items', function () {
 });
 
 it('can add an array property with multiple types', function () {
-    $schema = Schema::object('object')->arrayOf('is_enabled', [PropertyTypeEnum::BOOLEAN, PropertyTypeEnum::BYTE], true);
+    $schema = Schema::object('object')->arrayOf('is_enabled', ['boolean', 'byte'], true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -97,9 +96,9 @@ it('can add an object property with nested schema', function () {
             'address' => [
                 'type' => 'object',
                 'required' => false,
-                'properties' => [
-                    'street' => ['type' => 'string', 'required' => true],
-                    'city' => ['type' => 'string', 'required' => true],
+                'subtype' => [
+                    'street' => ['type' => 'primitive', 'subtype' => 'string', 'required' => true],
+                    'city' => ['type' => 'primitive', 'subtype' => 'string', 'required' => true],
                 ],
             ],
         ],
@@ -128,7 +127,8 @@ it('can add a reference property', function () {
         'type' => 'object',
         'properties' => [
             'user' => [
-                'type' => 'User',
+                'type' => 'reference',
+                'subtype' => 'User',
                 'required' => true,
             ],
         ],
@@ -142,7 +142,8 @@ it('can add a float property', function () {
         'type' => 'object',
         'properties' => [
             'price' => [
-                'type' => 'float',
+                'type' => 'primitive',
+                'subtype' => 'float',
                 'required' => true,
             ],
         ],
@@ -156,7 +157,8 @@ it('can add a date property', function () {
         'type' => 'object',
         'properties' => [
             'created_at' => [
-                'type' => 'date',
+                'type' => 'primitive',
+                'subtype' => 'date',
                 'required' => true,
             ],
         ],
@@ -170,7 +172,8 @@ it('can add a datetime property', function () {
         'type' => 'object',
         'properties' => [
             'updated_at' => [
-                'type' => 'datetime',
+                'type' => 'primitive',
+                'subtype' => 'datetime',
                 'required' => false,
             ],
         ],
@@ -184,7 +187,8 @@ it('can add a byte property', function () {
         'type' => 'object',
         'properties' => [
             'file_hash' => [
-                'type' => 'byte',
+                'type' => 'primitive',
+                'subtype' => 'byte',
                 'required' => true,
             ],
         ],
@@ -198,7 +202,8 @@ it('can add a binary property', function () {
         'type' => 'object',
         'properties' => [
             'file_data' => [
-                'type' => 'binary',
+                'type' => 'primitive',
+                'subtype' => 'binary',
                 'required' => false,
             ],
         ],
@@ -212,7 +217,8 @@ it('can add a decimal property', function () {
         'type' => 'object',
         'properties' => [
             'amount' => [
-                'type' => 'decimal',
+                'type' => 'primitive',
+                'subtype' => 'decimal',
                 'required' => true,
             ],
         ],
@@ -221,7 +227,7 @@ it('can add a decimal property', function () {
 
 it('can add a property with anyOf types', function () {
     $schema = Schema::object('object')
-        ->anyOf('mixed_property', ['string', PropertyTypeEnum::INTEGER->value], true);
+        ->anyOf('mixed_property', ['string', 'integer'], true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',

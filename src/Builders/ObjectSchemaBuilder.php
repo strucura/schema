@@ -100,26 +100,25 @@ class ObjectSchemaBuilder
     /**
      * Creates a property that is an array of items
      *
-     * @param  string|PropertyTypeEnum|array<string|PropertyTypeEnum>|\Closure  $items  A single type, an array of types, or a callable for nested schema.
+     * @param  array<array{type: PropertyTypeEnum, subtype: string}>|\Closure  $items  An array of items where each item must have a 'type' and 'subtype', or a callable for nested schema.
      */
-    public function arrayOf(string $name, PropertyTypeEnum|string|array|\Closure $items, bool $isRequired = false): self
+    public function arrayOf(string $name, array|\Closure $items, bool $isRequired = false): self
     {
         return $this->addProperty($name, PropertyTypeEnum::ARRAY_OF, $isRequired, function (Property $property) use ($items) {
             if ($items instanceof \Closure) {
                 $nestedDefinition = new self;
                 $items($nestedDefinition);
                 $property->setAttribute('subtype', [
-                    'type'    => 'object',
-                    'subtype' => $nestedDefinition->toArray()['properties']
+                    'type' => 'object',
+                    'subtype' => $nestedDefinition->toArray()['properties'],
                 ]);
 
                 return $this;
             }
 
-            $property->setAttribute('subtype', match (true) {
-                is_array($items) => $items,
-                default => [$items],
-            });
+            $property->setAttribute('subtype', $items);
+
+            return $property;
         });
     }
 
@@ -161,7 +160,7 @@ class ObjectSchemaBuilder
      * Creates a property that can be one or more types
      *
      * @param  string  $name  The name of the property.
-     * @param  array<string|PropertyTypeEnum>  $types  An array of types, which can be either the string "string" or valid PropertyTypeEnum values.
+     * @param  array<array{type: PropertyTypeEnum, subtype: string}>  $types  An array of types, which can be either the string "string" or valid PropertyTypeEnum values.
      * @param  bool  $isRequired  Whether the property is required.
      */
     public function anyOf(string $name, array $types, bool $isRequired = false): self

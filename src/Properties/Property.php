@@ -11,7 +11,7 @@ class Property
 
     public function __construct(
         private readonly PropertyTypeEnum $type,
-        private readonly bool $required = false
+        private readonly bool $required = false,
     ) {}
 
     public function setAttribute(string $key, mixed $value): self

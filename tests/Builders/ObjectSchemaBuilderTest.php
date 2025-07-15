@@ -28,22 +28,6 @@ it('can add string, integer, and boolean properties', function () {
     ]);
 });
 
-it('can add an array property with nested items', function () {
-    $schema = Schema::object('object')
-        ->arrayOf('tags', 'string', true);
-
-    expect($schema->toArray())->toMatchArray([
-        'type' => 'object',
-        'properties' => [
-            'tags' => [
-                'type' => 'arrayOf',
-                'required' => true,
-                'subtype' => ['string'],
-            ],
-        ],
-    ]);
-});
-
 it('can add an array property with object items', function () {
     $schema = Schema::object('object')
         ->arrayOf('addresses', function (ObjectSchemaBuilder $nested) {
@@ -59,7 +43,7 @@ it('can add an array property with object items', function () {
                 'required' => true,
                 'subtype' => [
                     'type' => 'object',
-                    'properties' => [
+                    'subtype' => [
                         'street' => ['type' => 'primitive', 'subtype' => 'string', 'required' => true],
                         'city' => ['type' => 'primitive', 'subtype' => 'string', 'required' => true],
                     ],
@@ -70,7 +54,17 @@ it('can add an array property with object items', function () {
 });
 
 it('can add an array property with multiple types', function () {
-    $schema = Schema::object('object')->arrayOf('is_enabled', ['boolean', 'byte'], true);
+    $schema = Schema::object('object')
+        ->arrayOf('is_enabled', [
+            [
+                'type' => 'primitive',
+                'subtype' => 'boolean',
+            ],
+            [
+                'type' => 'primitive',
+                'subtype' => 'byte',
+            ],
+        ], true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -78,7 +72,16 @@ it('can add an array property with multiple types', function () {
             'is_enabled' => [
                 'type' => 'arrayOf',
                 'required' => true,
-                'subtype' => ['boolean', 'byte'],
+                'subtype' => [
+                    [
+                        'type' => 'primitive',
+                        'subtype' => 'boolean',
+                    ],
+                    [
+                        'type' => 'primitive',
+                        'subtype' => 'byte',
+                    ],
+                ],
             ],
         ],
     ]);

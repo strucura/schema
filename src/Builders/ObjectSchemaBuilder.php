@@ -108,18 +108,16 @@ class ObjectSchemaBuilder
             if ($items instanceof \Closure) {
                 $nestedDefinition = new self;
                 $items($nestedDefinition);
-                $property->setAttribute('subtype', $nestedDefinition->toArray()['properties']);
+                $property->setAttribute('subtype', [
+                    'type'    => 'object',
+                    'subtype' => $nestedDefinition->toArray()['properties']
+                ]);
 
                 return $this;
             }
 
             $property->setAttribute('subtype', match (true) {
-                is_array($items) => collect($items)->map(function ($item) {
-                    return $item instanceof PropertyTypeEnum ? $item->value : $item;
-                })->toArray(),
-
-                $items instanceof PropertyTypeEnum => [$items->value],
-
+                is_array($items) => $items,
                 default => [$items],
             });
         });

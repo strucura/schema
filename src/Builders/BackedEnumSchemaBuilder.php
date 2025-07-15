@@ -43,15 +43,4 @@ class BackedEnumSchemaBuilder
             'subtype' => $this->subtype,
         ];
     }
-
-    public function toTypeScript(): string
-    {
-        /** @phpstan-var view-string $view */
-        $view = 'typescript.backed-enum';
-
-        return view($view, [
-            'type' => $this->type,
-            'subtype' => $this->subtype,
-        ])->render();
-    }
 }

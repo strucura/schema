@@ -108,7 +108,7 @@ class ObjectSchemaBuilder
             if ($items instanceof \Closure) {
                 $nestedDefinition = new self;
                 $items($nestedDefinition);
-                $property->setAttribute('subtype', $nestedDefinition->toArray());
+                $property->setAttribute('subtype', $nestedDefinition->toArray()['properties']);
 
                 return $this;
             }

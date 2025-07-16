@@ -34,7 +34,6 @@ $schema = Schema::object()
     ->enum('status', ['active', 'inactive'], true) // Required enum property
     ->float('price', true) // Required float property
     ->date('created_at', true) // Required date property
-    ->anyOf('mixed_property', ['string', PropertyTypeEnum::INTEGER->value], true); // Required anyOf property
     ->object('address', function ($nested) {
         $nested->string('street', true);
         $nested->string('city', true);
@@ -70,11 +69,6 @@ print_r($schemaArray);
         'created_at' => [
             'type' => 'date',
             'required' => true,
-        ],
-        'mixed_property' => [
-            'type' => 'anyOf',
-            'required' => true,
-            'subtype' => ['string', 'integer'],
         ],
         'address' => [
             'type' => 'object',

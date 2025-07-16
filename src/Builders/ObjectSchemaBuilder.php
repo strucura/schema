@@ -99,26 +99,14 @@ class ObjectSchemaBuilder
 
     /**
      * Creates a property that is an array of items
-     *
-     * @param  array<array{type: PropertyTypeEnum, subtype: string}>|\Closure  $items  An array of items where each item must have a 'type' and 'subtype', or a callable for nested schema.
      */
-    public function arrayOf(string $name, array|\Closure $items, bool $isRequired = false): self
+    public function arrayOf(string $name, \Closure $callback, bool $isRequired = false): self
     {
-        return $this->addProperty($name, PropertyTypeEnum::ARRAY_OF, $isRequired, function (Property $property) use ($items) {
-            if ($items instanceof \Closure) {
-                $nestedDefinition = new self;
-                $items($nestedDefinition);
-                $property->setAttribute('subtype', [
-                    'type' => 'object',
-                    'subtype' => $nestedDefinition->toArray()['properties'],
-                ]);
+        return $this->addProperty($name, PropertyTypeEnum::ARRAY_OF, $isRequired, function (Property $property) use ($callback) {
+            $mixedPropertyBuilder = new MixedPropertyBuilder;
+            $callback($mixedPropertyBuilder);
 
-                return $this;
-            }
-
-            $property->setAttribute('subtype', $items);
-
-            return $property;
+            $property->setAttribute('subtype', $mixedPropertyBuilder->toArray());
         });
     }
 
@@ -160,13 +148,16 @@ class ObjectSchemaBuilder
      * Creates a property that can be one or more types
      *
      * @param  string  $name  The name of the property.
-     * @param  array<array{type: PropertyTypeEnum, subtype: string}>  $types  An array of types, which can be either the string "string" or valid PropertyTypeEnum values.
      * @param  bool  $isRequired  Whether the property is required.
      */
-    public function anyOf(string $name, array $types, bool $isRequired = false): self
+    public function anyOf(string $name, \Closure $closure, bool $isRequired = false): self
     {
-        return $this->addProperty($name, PropertyTypeEnum::ANY_OF, $isRequired, function (Property $property) use ($types) {
-            $property->setAttribute('subtype', $types);
+        return $this->addProperty($name, PropertyTypeEnum::ANY_OF, $isRequired, function (Property $property) use ($closure) {
+            $builder = new MixedPropertyBuilder;
+
+            $closure($builder);
+
+            $property->setAttribute('subtype', $builder->toArray());
         });
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+use Strucura\Schema\Builders\MixedPropertyBuilder;
 use Strucura\Schema\Builders\ObjectSchemaBuilder;
 use Strucura\Schema\Facades\Schema;
 
@@ -30,9 +31,13 @@ it('can add string, integer, and boolean properties', function () {
 
 it('can add an array property with object items', function () {
     $schema = Schema::object('object')
-        ->arrayOf('addresses', function (ObjectSchemaBuilder $nested) {
-            $nested->string('street', true)
-                ->string('city', true);
+        ->arrayOf('addresses', function (MixedPropertyBuilder $array) {
+            $array->string()
+                ->integer()
+                ->addObject(function ($nested) {
+                    $nested->string('street', true)
+                        ->string('city', true);
+                });
         }, true);
 
     expect($schema->toArray())->toMatchArray([
@@ -42,10 +47,28 @@ it('can add an array property with object items', function () {
                 'type' => 'arrayOf',
                 'required' => true,
                 'subtype' => [
-                    'type' => 'object',
-                    'subtype' => [
-                        'street' => ['type' => 'primitive', 'subtype' => 'string', 'required' => true],
-                        'city' => ['type' => 'primitive', 'subtype' => 'string', 'required' => true],
+                    [
+                        'type' => 'primitive',
+                        'subtype' => 'string',
+                    ],
+                    [
+                        'type' => 'primitive',
+                        'subtype' => 'integer',
+                    ],
+                    [
+                        'type' => 'object',
+                        'subtype' => [
+                            'street' => [
+                                'type' => 'primitive',
+                                'subtype' => 'string',
+                                'required' => true,
+                            ],
+                            'city' => [
+                                'type' => 'primitive',
+                                'subtype' => 'string',
+                                'required' => true,
+                            ],
+                        ],
                     ],
                 ],
             ],
@@ -55,16 +78,10 @@ it('can add an array property with object items', function () {
 
 it('can add an array property with multiple types', function () {
     $schema = Schema::object('object')
-        ->arrayOf('is_enabled', [
-            [
-                'type' => 'primitive',
-                'subtype' => 'boolean',
-            ],
-            [
-                'type' => 'primitive',
-                'subtype' => 'byte',
-            ],
-        ], true);
+        ->arrayOf('is_enabled', function (MixedPropertyBuilder $builder) {
+            $builder->boolean()
+                ->byte();
+        }, true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -230,7 +247,11 @@ it('can add a decimal property', function () {
 
 it('can add a property with anyOf types', function () {
     $schema = Schema::object('object')
-        ->anyOf('mixed_property', ['string', 'integer'], true);
+        ->anyOf('mixed_property', function (MixedPropertyBuilder $mixed) {
+            $mixed->string()
+                ->integer()
+                ->addReference('User');
+        }, true);
 
     expect($schema->toArray())->toMatchArray([
         'type' => 'object',
@@ -238,7 +259,20 @@ it('can add a property with anyOf types', function () {
             'mixed_property' => [
                 'type' => 'anyOf',
                 'required' => true,
-                'subtype' => ['string', 'integer'],
+                'subtype' => [
+                    [
+                        'type' => 'primitive',
+                        'subtype' => 'string',
+                    ],
+                    [
+                        'type' => 'primitive',
+                        'subtype' => 'integer',
+                    ],
+                    [
+                        'type' => 'reference',
+                        'subtype' => 'User',
+                    ],
+                ],
             ],
         ],
     ]);
